@@ -1,11 +1,12 @@
 export const MANAGER_BUTTON_NAME = '按钮管理';
 
 export type ButtonKind = 'script' | 'qr' | 'dom';
-export type ButtonFilter = 'all' | 'script' | 'qr' | 'hidden';
+export type ButtonFilter = 'all' | 'script' | 'qr';
 
 export type ManagerSettings = {
   version: 1;
   compactEnabled: boolean;
+  maxButtonRows: number;
   hiddenKeys: string[];
   orderedKeys: string[];
 };

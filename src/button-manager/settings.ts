@@ -4,6 +4,7 @@ const SettingsSchema = z
   .object({
     version: z.literal(1).default(1),
     compactEnabled: z.boolean().default(true),
+    maxButtonRows: z.number().int().min(1).max(8).default(2),
     hiddenKeys: z.array(z.string()).default([]),
     orderedKeys: z.array(z.string()).default([]),
   })
@@ -12,6 +13,7 @@ const SettingsSchema = z
 const DEFAULT_SETTINGS: ManagerSettings = {
   version: 1,
   compactEnabled: true,
+  maxButtonRows: 2,
   hiddenKeys: [],
   orderedKeys: [],
 };
@@ -26,6 +28,7 @@ export function normalizeSettings(value: unknown): ManagerSettings {
     return {
       version: 1,
       compactEnabled: parsed.compactEnabled,
+      maxButtonRows: parsed.maxButtonRows,
       hiddenKeys: uniqueStrings(parsed.hiddenKeys),
       orderedKeys: uniqueStrings(parsed.orderedKeys),
     };
@@ -84,4 +87,8 @@ export function withOrderedKeys(settings: ManagerSettings, orderedKeys: string[]
 
 export function withCompactEnabled(settings: ManagerSettings, compactEnabled: boolean): ManagerSettings {
   return normalizeSettings({ ...settings, compactEnabled });
+}
+
+export function withMaxButtonRows(settings: ManagerSettings, maxButtonRows: number): ManagerSettings {
+  return normalizeSettings({ ...settings, maxButtonRows });
 }

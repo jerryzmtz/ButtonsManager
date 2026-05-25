@@ -5,6 +5,7 @@ import {
   sortItemsBySettings,
   withCompactEnabled,
   withHiddenKey,
+  withMaxButtonRows,
   withOrderedKeys,
 } from './settings';
 import { getHostDocument, getHostWindow } from './host-dom';
@@ -19,7 +20,6 @@ const FILTER_LABELS: Record<ButtonFilter, string> = {
   all: '全部',
   script: '助手',
   qr: 'QR',
-  hidden: '隐藏',
 };
 
 function createElement<K extends keyof HTMLElementTagNameMap>(
@@ -130,8 +130,7 @@ export class ButtonManagerPanel {
       const filterMatched =
         this.filter === 'all' ||
         (this.filter === 'script' && item.kind === 'script') ||
-        (this.filter === 'qr' && item.kind !== 'script') ||
-        (this.filter === 'hidden' && hidden);
+        (this.filter === 'qr' && item.kind !== 'script');
       const searchMatched =
         !search ||
         item.label.toLowerCase().includes(search) ||
@@ -301,6 +300,22 @@ export class ButtonManagerPanel {
       createElement('span', 'bm-switch-label', '紧凑排布'),
     );
     filters.append(compact);
+
+    const maxRows = createElement('label', 'bm-row-limit');
+    maxRows.append(createElement('span', 'bm-row-limit-label', '最大行数'));
+    const maxRowsSelect = createElement('select', 'bm-row-limit-select') as HTMLSelectElement;
+    [1, 2, 3, 4, 5, 6, 8].forEach(value => {
+      const option = createElement('option') as HTMLOptionElement;
+      option.value = String(value);
+      option.textContent = `${value}`;
+      option.selected = value === this.state!.settings.maxButtonRows;
+      maxRowsSelect.append(option);
+    });
+    maxRowsSelect.addEventListener('change', () => {
+      this.commit(withMaxButtonRows(this.state!.settings, Number(maxRowsSelect.value)));
+    });
+    maxRows.append(maxRowsSelect);
+    filters.append(maxRows);
 
     toolbar.append(searchWrap, filters);
     return toolbar;

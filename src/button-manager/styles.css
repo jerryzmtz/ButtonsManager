@@ -113,6 +113,7 @@
 .bm-filter,
 .bm-icon-button,
 .bm-row-handle,
+.bm-row-limit-select,
 .bm-secondary-button {
   min-height: 34px;
   color: var(--SmartThemeBodyColor);
@@ -129,6 +130,7 @@
 .bm-filter:hover,
 .bm-icon-button:hover,
 .bm-row-handle:hover,
+.bm-row-limit-select:hover,
 .bm-secondary-button:hover {
   background: color-mix(
     in srgb,
@@ -140,6 +142,7 @@
 .bm-filter:focus-visible,
 .bm-icon-button:focus-visible,
 .bm-row-handle:focus-visible,
+.bm-row-limit-select:focus-visible,
 .bm-secondary-button:focus-visible,
 .bm-search-wrap:focus-within {
   outline: 2px solid color-mix(in srgb, var(--SmartThemeQuoteColor, var(--SmartThemeBodyColor)) 70%, transparent);
@@ -207,6 +210,27 @@
   cursor: pointer;
   font-size: 13px;
   font-weight: 600;
+}
+
+.bm-row-limit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  color: var(--SmartThemeBodyColor);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.bm-row-limit-label {
+  white-space: nowrap;
+}
+
+.bm-row-limit-select {
+  min-width: 54px;
+  padding: 0 8px;
+  font: inherit;
+  font-size: 13px;
 }
 
 .bm-switch input {
@@ -376,6 +400,15 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
+  max-height: var(--bm-max-button-bar-height, calc(5.1em + 5px));
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+#qr--bar.bm-compact::-webkit-scrollbar {
+  display: none;
 }
 
 #qr--bar.bm-compact .qr--button {
@@ -459,11 +492,20 @@
 
   .bm-switch {
     min-height: 34px;
-    margin-left: auto;
     padding-left: 6px;
     gap: 6px;
     white-space: nowrap;
     font-size: 13px;
+  }
+
+  .bm-row-limit {
+    margin-left: auto;
+    gap: 5px;
+    font-size: 13px;
+  }
+
+  .bm-row-limit-select {
+    min-width: 48px;
   }
 
   .bm-switch-track {
@@ -578,6 +620,17 @@
   .bm-switch {
     gap: 5px;
     padding-left: 4px;
+    font-size: 12px;
+  }
+
+  .bm-row-limit {
+    gap: 4px;
+    font-size: 12px;
+  }
+
+  .bm-row-limit-select {
+    min-width: 44px;
+    padding: 0 6px;
     font-size: 12px;
   }
 

@@ -49,10 +49,21 @@ function applyBarClass(compactEnabled: boolean): void {
     });
 }
 
+function applyBarRowLimit(settings: ManagerSettings): void {
+  const maxHeight = `calc(${(settings.maxButtonRows * 2.55).toFixed(2)}em + ${Math.max(0, settings.maxButtonRows - 1) * 5}px)`;
+  getHostDocument()
+    .querySelectorAll<HTMLElement>('#qr--bar')
+    .forEach(bar => {
+      bar.style.setProperty('--bm-max-button-rows', String(settings.maxButtonRows));
+      bar.style.setProperty('--bm-max-button-bar-height', maxHeight);
+    });
+}
+
 export function applyButtonLayout(rawItems: ButtonItem[], settings: ManagerSettings): LayoutResult {
   syncQuickReplyCombined(settings.compactEnabled);
 
   applyBarClass(settings.compactEnabled);
+  applyBarRowLimit(settings);
   const items = [...rawItems];
   ensureScriptDomItems(items);
 

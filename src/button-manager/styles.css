@@ -258,8 +258,15 @@
 
 .bm-list {
   min-height: 0;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 8px;
+  scrollbar-width: none;
+}
+
+.bm-list::-webkit-scrollbar {
+  display: none;
 }
 
 .bm-row {
@@ -400,6 +407,7 @@
   .bm-panel {
     width: 100%;
     max-height: min(86dvh, 720px);
+    min-height: 0;
     border-bottom: 0;
     border-radius: 12px 12px 0 0;
   }
@@ -475,6 +483,7 @@
   }
 
   .bm-list {
+    max-height: max(190px, calc(86dvh - 188px));
     padding: 6px;
   }
 
@@ -547,6 +556,10 @@
 
   .bm-panel {
     max-height: 88dvh;
+  }
+
+  .bm-list {
+    max-height: max(180px, calc(88dvh - 184px));
   }
 
   .bm-toolbar {

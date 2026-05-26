@@ -3,7 +3,7 @@
   "enabled": true,
   "name": "按钮管理-手动更新",
   "id": "838fcd44-e6e6-4239-a161-063f74465e1a",
-  "content": "import 'https://rawcdn.githack.com/jerryzmtz/ButtonsManager/v0.0.2/dist/button-manager/index.js';",
+  "content": "import 'https://rawcdn.githack.com/jerryzmtz/ButtonsManager/v1.01/dist/button-manager/index.js';",
   "info": "SillyTavern / Tavern Helper 按钮管理工具。支持助手按钮与 QR 按钮的紧凑排布、显示隐藏、拖拽排序和按钮栏最大行数限制。@kousakayou",
   "button": {
     "enabled": true,

@@ -63,6 +63,14 @@ function isRenderedInButtonBar(element: HTMLElement | null | undefined): element
   return Boolean(element?.isConnected && buttonBar?.contains(element));
 }
 
+function getRenderedQuickReplyButton(element: HTMLElement | null | undefined): HTMLElement | undefined {
+  if (!isRenderedInButtonBar(element)) {
+    return undefined;
+  }
+
+  return element.classList.contains('qr--button') ? element : (element.closest<HTMLElement>('.qr--button') ?? undefined);
+}
+
 function collectConfigItems(
   config: QuickReplyConfig | undefined,
   scopeFallback: string,
@@ -82,8 +90,8 @@ function collectConfigItems(
     const source = QR_SCOPE_LABELS[scope] ?? '快捷回复';
 
     (link.set.qrList ?? []).forEach((qr, qrIndex) => {
-      const element = qr.dom ?? undefined;
-      if (qr.isHidden || !isRenderedInButtonBar(element)) {
+      const element = getRenderedQuickReplyButton(qr.dom);
+      if (qr.isHidden || !element) {
         return;
       }
 

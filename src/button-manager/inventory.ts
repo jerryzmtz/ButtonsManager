@@ -25,6 +25,10 @@ function getText(element: Element): string {
   return (element.textContent ?? '').replace(/\s+/g, ' ').trim();
 }
 
+function normalizeComparableLabel(label: string): string {
+  return label.replace(/[：:]+$/u, '').replace(/\s+/g, ' ').trim();
+}
+
 function flattenScriptTrees(trees: ScriptTree[], source: string, metas: Map<string, ScriptMeta>): void {
   for (const tree of trees) {
     if (tree.type === 'folder') {
@@ -98,7 +102,46 @@ function attachScriptElements(items: ButtonItem[]): void {
     });
 }
 
-function collectDomFallbackItems(startIndex: number, knownKeys: Set<string>): ButtonItem[] {
+function attachQuickReplyElementsByLabel(items: ButtonItem[]): Set<HTMLElement> {
+  const quickReplyItemsByLabel = new Map<string, ButtonItem[]>();
+  for (const item of items) {
+    if (item.kind !== 'qr') {
+      continue;
+    }
+
+    const comparableLabel = normalizeComparableLabel(item.label);
+    if (!comparableLabel) {
+      continue;
+    }
+
+    const matchingItems = quickReplyItemsByLabel.get(comparableLabel) ?? [];
+    matchingItems.push(item);
+    quickReplyItemsByLabel.set(comparableLabel, matchingItems);
+  }
+
+  const matchedElements = new Set<HTMLElement>();
+  getHostDocument()
+    .querySelectorAll<HTMLElement>('#qr--bar .qr--button')
+    .forEach(element => {
+      if (element.closest('[id^="script_container_"]')) {
+        return;
+      }
+
+      const comparableLabel = normalizeComparableLabel(getButtonLabel(element) || element.title || '');
+      const matchingItems = comparableLabel ? quickReplyItemsByLabel.get(comparableLabel) : undefined;
+      const item = matchingItems?.shift();
+      if (!item) {
+        return;
+      }
+
+      item.element = element;
+      matchedElements.add(element);
+    });
+
+  return matchedElements;
+}
+
+function collectDomFallbackItems(startIndex: number, knownKeys: Set<string>, knownElements: Set<HTMLElement>): ButtonItem[] {
   const items: ButtonItem[] = [];
   let index = startIndex;
   const seenLabels = new Map<string, number>();
@@ -107,6 +150,10 @@ function collectDomFallbackItems(startIndex: number, knownKeys: Set<string>): Bu
     .querySelectorAll<HTMLElement>('#qr--bar .qr--button')
     .forEach(element => {
       if (element.closest('[id^="script_container_"]')) {
+        return;
+      }
+
+      if (knownElements.has(element)) {
         return;
       }
 
@@ -165,8 +212,15 @@ export function getButtonLabel(element: Element): string {
 export function collectButtonItems(): ButtonItem[] {
   const scriptItems = collectScriptItems(0);
   const quickReplyItems = collectQuickReplyItems(100000);
+  const matchedQuickReplyElements = attachQuickReplyElementsByLabel(quickReplyItems);
   const knownKeys = new Set([...scriptItems, ...quickReplyItems].map(item => item.key));
-  const items = [...scriptItems, ...quickReplyItems, ...collectDomFallbackItems(200000, knownKeys)];
+  const knownElements = new Set(
+    [...scriptItems, ...quickReplyItems]
+      .map(item => item.element)
+      .filter((element): element is HTMLElement => Boolean(element)),
+  );
+  matchedQuickReplyElements.forEach(element => knownElements.add(element));
+  const items = [...scriptItems, ...quickReplyItems, ...collectDomFallbackItems(200000, knownKeys, knownElements)];
   attachScriptElements(items);
   return sortByCurrentBarOrder(items);
 }
